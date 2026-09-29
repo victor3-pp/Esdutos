@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Vida das Células: Pixel Art Realista 32-Bit</title>
+    <style>
+        :root {
+            --bg-main: #0b0e14;
+            --bg-card: #121620;
+            --bg-inner-card: #171c28;
+            --border-color: #1f293d;
+            --text-main: #e0e6ed;
+            --text-muted: #8a99ad;
+            --accent-cyan: #00f0ff;
+            --accent-blue: #7dcfff;
+            --accent-red: #ff0055;
+            --accent-yellow: #f1c40f;
+            --accent-green: #27ae60;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-main);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(180deg, #151922 0%, var(--bg-main) 100%);
+            color: #ffffff;
+            text-align: center;
+            padding: 3rem 1rem 2rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.1rem;
+            line-height: 1.2;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+        }
+
+        header p {
+            margin-top: 0.6rem;
+            font-size: 1.05rem;
+            color: var(--text-muted);
+        }
+
+        nav {
+            background-color: var(--bg-card);
+            padding: 0.75rem 0.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+            gap: 0.4rem;
+        }
+
+        nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        nav::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.5rem 0.9rem;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: inline-block;
+            border-radius: 6px;
+            transition: all 0.25s ease;
+            border: 1px solid transparent;
+        }
+
+        nav a:hover, nav a:focus {
+            background-color: var(--accent-cyan);
+            color: var(--bg-main);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+            border-color: var(--accent-cyan);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 860px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.6rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            transition: transform 0.2s ease;
+        }
+
+        h2 {
+            color: var(--accent-cyan);
+            border-bottom: 2px solid var(--accent-cyan);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+            font-size: 1.5rem;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+        }
+
+        h3 {
+            color: var(--accent-blue);
+            margin-top: 1rem;
+            font-size: 1.15rem;
+        }
+
+        .pixel-art-container {
+            width: 100%;
+            background-color: #05070a;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            margin: 1.4rem 0;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .pixel-art-container svg {
+            width: 100%;
+            height: auto;
+            max-height: 320px;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            shape-rendering: crispEdges;
+        }
+
+        .card-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.4rem;
+        }
+
+        .card {
+            background-color: var(--bg-inner-card);
+            border-left: 4px solid var(--accent-cyan);
+            padding: 1.1rem;
+            border-radius: 6px;
+            border-top: 1px solid #22293a;
+            border-right: 1px solid #22293a;
+            border-bottom: 1px solid #22293a;
+        }
+
+        .card-alerta { border-left-color: var(--accent-red); }
+        .card-destaque { border-left-color: var(--accent-yellow); }
+        .card-sucesso { border-left-color: var(--accent-green); }
+
+        .card h3 {
+            margin-top: 0;
+            color: #ffffff;
+            font-size: 1.05rem;
+        }
+
+        .card p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        ul {
+            padding-left: 1.2rem;
+            margin-bottom: 0;
+        }
+
+        li {
+            margin-bottom: 0.6rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 1.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+            background-color: var(--bg-inner-card);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #1c2333;
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            background-color: #080a0e;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid #151922;
+        }
+
+        @media (min-width: 600px) {
+            header h1 { font-size: 2.4rem; }
+            nav { justify-content: center; overflow-x: visible; }
+            .card-container { flex-direction: row; flex-wrap: wrap; }
+            .card { flex: 1 1 calc(50% - 1rem); }
+            section { padding: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Como Funciona a Vida das Células?</h1>
+        <p>Guia Interativo em Pixel Art 32-Bit: Ciclo Celular, Gametogênese, Fecundação e Estratégias Reprodutivas</p>
+    </header>
+
+    <nav>
+        <a href="#interfase">1. Interfase</a>
+        <a href="#mitose">2. Mitose</a>
+        <a href="#meiose">3. Meiose</a>
+        <a href="#gametogenese">4. Gametogênese</a>
+        <a href="#fecundacao">5. Fecundação</a>
+        <a href="#diferenciacao">6. Especialização</a>
+        <a href="#morte">7. Morte Celular</a>
+        <a href="#estrategias">8. Estratégias Reprodutivas</a>
+    </nav>
+
+    <div class="container">
+
+        <!-- ETAPA 1: INTERFASE -->
+        <section id="interfase">
+            <h2>1. Interfase: A Fase de Preparação</h2>
+            <p>Antes de qualquer divisão celular, a célula passa pela <strong>Interfase</strong> — o período de maior atividade metabólica do ciclo celular. Pense nisto como a fase de preparação de suprimentos e duplicação de componentes fundamentais.</p>
+
+            <div class="pixel-art-container">
+                <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="30" y="20" width="100" height="80" fill="#1b4d3e" />
+                    <rect x="25" y="25" width="110" height="70" fill="#1b4d3e" />
+                    <rect x="20" y="30" width="120" height="60" fill="#205c4b" />
+                    <rect x="35" y="15" width="90" height="90" fill="#256d59" />
+                    <rect x="30" y="25" width="85" height="10" fill="#2e856e" />
+                    <rect x="25" y="35" width="10" height="45" fill="#2e856e" />
+                    <rect x="20" y="90" width="120" height="2" fill="#0d2820" />
+                    <rect x="135" y="30" width="5" height="60" fill="#0d2820" />
+                    <rect x="35" y="14" width="90" height="2" fill="#38a387" />
+                    <rect x="125" y="16" width="10" height="2" fill="#38a387" />
+                    <rect x="135" y="18" width="5" height="12" fill="#38a387" />
+                    <rect x="140" y="30" width="2" height="60" fill="#38a387" />
+                    <rect x="60" y="40" width="40" height="40" fill="#4a235a" />
+                    <rect x="55" y="45" width="50" height="30" fill="#5b2c6f" />
+                    <rect x="65" y="35" width="30" height="50" fill="#6c3483" />
+                    <rect x="60" y="42" width="30" height="4" fill="#884ea0" />
+                    <rect x="65" y="50" width="6" height="6" fill="#a569bd" />
+                    <rect x="73" y="48" width="12" height="4" fill="#bb8fce" />
+                    <rect x="80" y="54" width="8" height="10" fill="#a569bd" />
+                    <rect x="68" y="60" width="14" height="6" fill="#d7bde2" />
+                    <rect x="75" y="70" width="10" height="4" fill="#bb8fce" />
+                    <rect x="62" y="66" width="6" height="8" fill="#a569bd" />
+                    <rect x="35" y="35" width="12" height="6" fill="#b03a2e" />
+                    <rect x="37" y="37" width="8" height="2" fill="#f1948a" />
+                    <rect x="110" y="70" width="14" height="7" fill="#b03a2e" />
+                    <rect x="112" y="72" width="10" height="3" fill="#f1948a" />
+                    <rect x="42" y="72" width="6" height="6" fill="#f39c12" />
+                    <rect x="44" y="74" width="2" height="2" fill="#fef9e7" />
+                    <rect x="50" y="75" width="6" height="6" fill="#d35400" />
+                    <rect x="52" y="77" width="2" height="2" fill="#fef9e7" />
+                </svg>
+            </div>
+
+            <div class="card-container">
+                <div class="card">
+                    <h3>G1 (Intervalo 1)</h3>
+                    <p>A célula aumenta de volume, sintetiza grande quantidade de RNA e proteínas, e executa as suas funções normais no organismo.</p>
+                </div>
+                <div class="card">
+                    <h3>S (Síntese)</h3>
+                    <p>Ocorre a duplicação exata da molécula de DNA. Cada cromossoma passa a ser constituído por duas cromátides-irmãs ligadas pelo centrómero.</p>
+                </div>
+                <div class="card">
+                    <h3>G2 (Intervalo 2)</h3>
+                    <p>Fase final de checagem. A célula verifica se houve erros no DNA e finaliza a produção das estruturas necessárias para a divisão.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ETAPA 2: MITOSE -->
+        <section id="mitose">
+            <h2>2. Mitose: Divisão Equacional</h2>
+            <p>A mitose é o processo em que <strong>uma célula mãe diploide (2n) dá origem a duas células filhas geneticamente idênticas</strong>. É fundamental para o crescimento corporal, a renovação celular e a reprodução assexuada em diversos organismos.</p>
+
+            <div class="pixel-art-container">
+                <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="15" y="30" width="130" height="60" fill="#1b4f72" />
+                    <rect x="20" y="25" width="120" height="70" fill="#21618c" />
+                    <rect x="25" y="20" width="110" height="80" fill="#2874a6" />
+                    <rect x="25" y="22" width="110" height="3" fill="#5499c7" />
+                    <rect x="22" y="56" width="8" height="8" fill="#f39c12" />
+                    <rect x="24" y="58" width="4" height="4" fill="#ffffff" />
+                    <rect x="130" y="56" width="8" height="8" fill="#f39c12" />
+                    <rect x="132" y="58" width="4" height="4" fill="#ffffff" />
+                    <line x1="26" y1="60" x2="68" y2="35" stroke="#aed6f1" stroke-width="1" stroke-dasharray="2,1" />
+                    <line x1="26" y1="60" x2="68" y2="60" stroke="#aed6f1" stroke-width="1.5" />
+                    <line x1="26" y1="60" x2="68" y2="85" stroke="#aed6f1" stroke-width="1" stroke-dasharray="2,1" />
+                    <line x1="134" y1="60" x2="92" y2="35" stroke="#aed6f1" stroke-width="1" stroke-dasharray="2,1" />
+                    <line x1="134" y1="60" x2="92" y2="60" stroke="#aed6f1" stroke-width="1.5" />
+                    <line x1="134" y1="60" x2="92" y2="85" stroke="#aed6f1" stroke-width="1" stroke-dasharray="2,1" />
+                    <path d="M 62 30 L 68 35 L 62 40" stroke="#e74c3c" stroke-width="3" fill="none" />
+                    <path d="M 60 55 L 68 60 L 60 65" stroke="#ff0055" stroke-width="3.5" fill="none" />
+                    <path d="M 62 80 L 68 85 L 62 90" stroke="#e74c3c" stroke-width="3" fill="none" />
+                    <path d="M 98 30 L 92 35 L 98 40" stroke="#e74c3c" stroke-width="3" fill="none" />
+                    <path d="M 100 55 L 92 60 L 100 65" stroke="#ff0055" stroke-width="3.5" fill="none" />
+                    <path d="M 98 80 L 92 85 L 98 90" stroke="#e74c3c" stroke-width="3" fill="none" />
+                    <rect x="67" y="34" width="2" height="2" fill="#ffffff" />
+                    <rect x="67" y="59" width="2" height="2" fill="#ffffff" />
+                    <rect x="67" y="84" width="2" height="2" fill="#ffffff" />
+                    <rect x="91" y="34" width="2" height="2" fill="#ffffff" />
+                    <rect x="91" y="59" width="2" height="2" fill="#ffffff" />
+                    <rect x="91" y="84" width="2" height="2" fill="#ffffff" />
+                </svg>
+            </div>
+
+            <ul>
+                <li><strong>Prófase:</strong> Condensação da cromatina em cromossomas visíveis, início da formação do fuso e desintegração da carioteca.</li>
+                <li><strong>Metáfase:</strong> Nível máximo de condensação cromossómica; alinhamento exato dos cromossomas no equador da célula.</li>
+                <li><strong>Anáfase:</strong> Divisão dos centrómeros e encurtamento do fuso, puxando as cromátides-irmãs para polos opostos.</li>
+                <li><strong>Telófase e Citocinese:</strong> Reestruturação da carioteca, descondensação do DNA e estrangulamento (ou divisão) do citoplasma.</li>
+            </ul>
+        </section>
+
+        <!-- ETAPA 3: MEIOSE -->
+        <section id="meiose">
+            <h2>3. Meiose: Divisão Reducional e Variabilidade</h2>
+            <p>A meiose reduz pela metade o número de cromossomas de uma célula, originando <strong>quatro células-filhas haploides (n)</strong>. Este processo é exclusivo para a produção de gametas ou esporos.</p>
+
+            <div class="pixel-art-container">
+                <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="20" y="15" width="45" height="45" fill="#117a65" />
+                    <rect x="22" y="17" width="41" height="5" fill="#48c9b0" />
+                    <rect x="35" y="30" width="15" height="15" fill="#d35400" />
+                    <rect x="38" y="33" width="9" height="9" fill="#f39c12" />
+                    <rect x="95" y="15" width="45" height="45" fill="#117a65" />
+                    <rect x="97" y="17" width="41" height="5" fill="#48c9b0" />
+                    <rect x="110" y="30" width="15" height="15" fill="#c0392b" />
+                    <rect x="113" y="33" width="9" height="9" fill="#e74c3c" />
+                    <rect x="20" y="65" width="45" height="45" fill="#117a65" />
+                    <rect x="22" y="67" width="41" height="5" fill="#48c9b0" />
+                    <rect x="35" y="80" width="15" height="15" fill="#7d3c98" />
+                    <rect x="38" y="83" width="9" height="9" fill="#bb8fce" />
+                    <rect x="95" y="65" width="45" height="45" fill="#117a65" />
+                    <rect x="97" y="67" width="41" height="5" fill="#48c9b0" />
+                    <rect x="110" y="80" width="15" height="15" fill="#1f618d" />
+                    <rect x="113" y="83" width="9" height="9" fill="#5499c7" />
+                    <line x1="80" y1="10" x2="80" y2="110" stroke="#00f0ff" stroke-width="1" stroke-dasharray="4,2" />
+                    <line x1="10" y1="60" x2="150" y2="60" stroke="#00f0ff" stroke-width="1" stroke-dasharray="4,2" />
+                </svg>
+            </div>
+
+            <div class="card-container">
+                <div class="card">
+                    <h3>Meiose I (Reducional)</h3>
+                    <p>Separa os <strong>cromossomas homólogos</strong>. Na <strong>Prófase I</strong>, ocorre o <em>crossing-over</em> (permutação genérica) entre cromátides não-irmãs, trocando trechos de DNA e garantindo variabilidade.</p>
+                </div>
+                <div class="card">
+                    <h3>Meiose II (Equacional)</h3>
+                    <p>Processo análogo à mitose: separa as <strong>cromátides-irmãs</strong> das duas células formadas na Meiose I, culminando em quatro células haploides contendo material genético recombinado.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ETAPA 4: GAMETOGÊNESE -->
+        <section id="gametogenese">
+            <h2>4. Gametogênese Humana</h2>
+            <p>Processo de diferenciação celular e meiose realizado nas gônadas para gerar os gametas necessários à reprodução sexuada.</p>
+
+            <!-- SUBSTITUÍDO: Imagem estática por SVG Pixel Art de Gametogênese -->
+            <div class="pixel-art-container">
+                <svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Espermatogênese (Lado Esquerdo) -->
+                    <text x="12" y="16" fill="#7dcfff" font-size="7" font-weight="bold">ESPERMATOGÊNESE</text>
+                    <rect x="35" y="22" width="12" height="12" fill="#2980b9" />
+                    <!-- Divisão 1 -->
+                    <rect x="22" y="42" width="10" height="10" fill="#3498db" />
+                    <rect x="48" y="42" width="10" height="10" fill="#3498db" />
+                    <!-- Espermatozoides (4) -->
+                    <g fill="#00f0ff">
+                        <rect x="15" y="68" width="5" height="5" />
+                        <rect x="30" y="68" width="5" height="5" />
+                        <rect x="45" y="68" width="5" height="5" />
+                        <rect x="60" y="68" width="5" height="5" />
+                    </g>
+                    <!-- Caudas -->
+                    <path d="M 17 73 L 17 88 M 32 73 L 32 88 M 47 73 L 47 88 M 62 73 L 62 88" stroke="#7dcfff" stroke-width="1.5" />
+
+                    <!-- Divisória central -->
+                    <line x1="80" y1="10" x2="80" y2="100" stroke="#1f293d" stroke-width="2" />
+
+                    <!-- Ovogênese (Lado Direito) -->
+                    <text x="96" y="16" fill="#ff0055" font-size="7" font-weight="bold">OVOGÊNESE</text>
+                    <rect x="118" y="22" width="16" height="16" fill="#c0392b" />
+                    <!-- Desigualdade citoplasmática -->
+                    <rect x="105" y="46" width="18" height="18" fill="#e74c3c" />
+                    <rect x="135" y="52" width="6" height="6" fill="#881111" /> <!-- 1º corpúsculo -->
+                    <!-- Ovócito maduro + corpúsculos -->
+                    <circle cx="114" cy="80" r="10" fill="#ff0055" />
+                    <circle cx="114" cy="80" r="5" fill="#ff77aa" />
+                                        <rect x="133" y="78" width="4" height="4" fill="#881111" />
+                    <rect x="140" y="78" width="4" height="4" fill="#881111" />
+                    <rect x="147" y="78" width="4" height="4" fill="#881111" />
+                </svg>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Espermatogênese</th>
+                            <th>Ovogênese</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Local de Formação</strong></td>
+                            <td>Testículos (Túbulos seminíferos)</td>
+                            <td>Ovários (Folículos ovarianos)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rendimento Meiótico</strong></td>
+                            <td>4 espermatozoides funcionais por célula-mãe</td>
+                            <td>1 ovócito funcional + 3 corpúsculos polares</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Período de Multiplicação</strong></td>
+                            <td>Contínuo durante toda a vida adulta</td>
+                            <td>Interrompido no 3º mês de vida embrionária</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pausa Meiótica</strong></td>
+                            <td>Não possui interrupções</td>
+                            <td>Estacionado em Prófase I até a puberdade</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ETAPA 5: FECUNDAÇÃO -->
+        <section id="fecundacao">
+            <h2>5. Fecundação: A Origem do Zigoto</h2>
+            <p>Ocorre quando o espermatozoide fertiliza o ovócito II, restaurando o número diploide da espécie e dando início às primeiras clivagens embrionárias.</p>
+
+            <!-- SUBSTITUÍDO: Imagem estática por SVG Pixel Art de Fecundação -->
+            <div class="pixel-art-container">
+                <svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Grande Ovócito -->
+                    <rect x="50" y="15" width="85" height="85" fill="#8e44ad" />
+                    <rect x="55" y="20" width="75" height="75" fill="#9b59b6" />
+                    <!-- Zona Pelúcida -->
+                    <rect x="45" y="10" width="95" height="95" fill="none" stroke="#f1c40f" stroke-width="3" stroke-dasharray="4,2" />
+                    <!-- Núcleo do Ovócito -->
+                    <rect x="85" y="45" width="25" height="25" fill="#d7bde2" />
+                    <rect x="90" y="50" width="15" height="15" fill="#ffffff" />
+                    
+                    <!-- Espermatozoide Perfurando -->
+                    <g>
+                        <!-- Cauda -->
+                        <path d="M 5 65 L 15 55 L 25 60 L 35 50" stroke="#00f0ff" stroke-width="2" fill="none" />
+                        <!-- Cabeça / Acrossomo entrando -->
+                        <rect x="35" y="47" width="12" height="7" fill="#00f0ff" />
+                        <rect x="45" y="48" width="6" height="5" fill="#ff0055" /> <!-- Reação acrossômica -->
+                    </g>
+                    <!-- Espermatozoides Bloqueados -->
+                    <path d="M 80 2 L 75 10" stroke="#00f0ff" stroke-width="1.5" />
+                    <rect x="73" y="9" width="4" height="3" fill="#00f0ff" />
+                    <path d="M 120 102 L 115 95" stroke="#00f0ff" stroke-width="1.5" />
+                    <rect x="113" y="93" width="4" height="3" fill="#00f0ff" />
+                </svg>
+            </div>
+
+            <ul>
+                <li><strong>Quimiotaxia:</strong> Atração química do espermatozoide por substâncias liberadas pelo ovócito.</li>
+                <li><strong>Reação Acrossômica:</strong> O acrossomo do espermatozoide libera enzimas que dissolvem a <em>corona radiata</em> e a <em>zona pelúcida</em>.</li>
+                <li><strong>Bloqueio da Polispermia:</strong> Após a fusão, a reação cortical altera a zona pelúcida para prevenir a entrada de outros espermatozoides.</li>
+                <li><strong>Anfimixia (Cariogamia):</strong> Fusão dos pró-núcleos masculino e feminino com combinação de material genético.</li>
+            </ul>
+        </section>
+
+        <!-- ETAPA 6: DIFERENCIAÇÃO CELULAR -->
+        <section id="diferenciacao">
+            <h2>6. Diferenciação Celular e Expressão Genética</h2>
+            <p>Mesmo possuindo o mesmo código genético exato, células somáticas assumem formatos e funções especializadas no corpo através da <strong>expressão gênica diferencial</strong>.</p>
+
+            <div class="pixel-art-container">
+                <svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="15" y="40" width="30" height="30" fill="#2c3e50" />
+                    <rect x="18" y="43" width="24" height="4" fill="#7f8c8d" />
+                    <rect x="25" y="50" width="10" height="10" fill="#16a085" />
+                    <path d="M 55 55 L 75 55 L 75 50 L 85 57 L 75 64 L 75 59 L 55 59 Z" fill="#ffaa00" />
+                    <polygon points="110,40 125,45 130,60 120,70 105,65 100,50" fill="#d35400" />
+                    <polygon points="112,43 123,47 126,58 118,66 107,62 103,51" fill="#e67e22" />
+                    <circle cx="115" cy="55" r="5" fill="#f39c12" />
+                    <path d="M 110 40 L 100 28 M 125 45 L 140 35 M 100 50 L 88 48 M 105 65 L 95 78" stroke="#e67e22" stroke-width="2" fill="none" />
+                    <line x1="130" y1="60" x2="155" y2="60" stroke="#d35400" stroke-width="3" />
+                    <rect x="134" y="57" width="6" height="6" fill="#f1c40f" />
+                    <rect x="143" y="57" width="6" height="6" fill="#f1c40f" />
+                </svg>
+            </div>
+
+            <div class="card-container">
+                <div class="card">
+                    <h3>Células-Tronco Totipotentes</h3>
+                    <p>Presentes no início do desenvolvimento embrionário (zigoto), capazes de se diferenciar em qualquer tecido corporal ou anexo embrionário.</p>
+                </div>
+                <div class="card">
+                    <h3>Células-Tronco Pluripotentes e Multipotentes</h3>
+                    <p>Podem originar quase todos os tecidos embrionários, exceto os anexos; ou especializar-se apenas em tecidos específicos (como células da medula óssea).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ETAPA 7: MORTE CELULAR -->
+        <section id="morte">
+            <h2>7. Morte Celular: Apoptose vs. Necrose</h2>
+            <p>A substituição e eliminação de células no corpo pode ocorrer por via fisiológica organizada ou por processos traumáticos graves.</p>
+
+            <div class="pixel-art-container">
+                <svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
+                    <g>
+                        <rect x="15" y="25" width="12" height="12" fill="#8e44ad" />
+                        <rect x="32" y="20" width="16" height="16" fill="#9b59b6" />
+                        <rect x="20" y="45" width="18" height="18" fill="#8e44ad" />
+                        <rect x="42" y="50" width="14" height="14" fill="#bb8fce" />
+                        <rect x="22" y="22" width="4" height="4" fill="#d7bde2" />
+                        <rect x="35" y="23" width="5" height="5" fill="#d7bde2" />
+                        <text x="14" y="90" fill="#a67c1e" font-size="8" font-family="sans-serif" font-weight="bold">APOPTOSE</text>
+                        <text x="12" y="100" fill="#7f8c8d" font-size="6" font-family="sans-serif">Programada e Sem Inflamação</text>
+                    </g>
+
+                    <line x1="80" y1="15" x2="80" y2="95" stroke="#1f293d" stroke-width="2" />
+
+                    <g>
+                        <polygon points="95,30 145,25 150,60 135,70 100,65 90,45" fill="#c0392b" />
+                        <polygon points="98,33 140,29 145,55 132,65 103,61 94,46" fill="#e74c3c" />
+                        <rect x="120" y="24" width="8" height="10" fill="#05070a" />
+                        <rect x="148" y="45" width="8" height="8" fill="#05070a" />
+                        <rect x="122" y="16" width="4" height="6" fill="#ff0055" />
+                        <rect x="127" y="12" width="5" height="5" fill="#ff5500" />
+                        <rect x="154" y="47" width="5" height="5" fill="#ff0055" />
+                        <text x="98" y="90" fill="#ff0055" font-size="8" font-family="sans-serif" font-weight="bold">NECROSE</text>
+                        <text x="95" y="100" fill="#7f8c8d" font-size="6" font-family="sans-serif">Lise e Processo Inflamatório</text>
+                    </g>
+                </svg>
+            </div>
+
+            <div class="card-container">
+                <div class="card card-sucesso">
+                    <h3>Apoptose (Morte Programada)</h3>
+                    <p>Processo ativo de 'suicídio celular' ordenado. A célula condensa-se, quebra seu DNA e fragmenta-se em corpos apoptóticos sem romper a membrana, permitindo rápida digestão sem provocar resposta inflamatória.</p>
+                </div>
+                <div class="card card-alerta">
+                    <h3>Necrose (Morte Traumática)</h3>
+                    <p>Provocada por lesões, falta de oxigénio ou toxinas. A célula incha, perde o controlo osmótico e sofre lise (ruptura de membrana), derramando enzimas digestivas no tecido e gerando intensa inflamação.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ETAPA 8: ESTRATÉGIAS REPRODUTIVAS -->
+        <section id="estrategias">
+            <h2>8. Estratégias Reprodutivas e Ciclos de Vida</h2>
+            <p>A diversidade de estratégias adotadas pelos seres vivos visa otimizar o sucesso adaptativo e a continuidade das espécies em diferentes ambientes.</p>
+
+            <!-- SUBSTITUÍDO: Imagem estática por SVG Pixel Art do Ciclo de Vida -->
+            <div class="pixel-art-container">
+                <svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Adulto Diplonte (2n) -->
+                    <rect x="65" y="15" width="30" height="30" fill="#27ae60" />
+                    <rect x="70" y="20" width="20" height="20" fill="#2ecc71" />
+                    <text x="73" y="32" fill="#ffffff" font-size="8" font-weight="bold">2n</text>
+
+                    <!-- Setas Meiótica caindo para Gametas (n) -->
+                    <path d="M 65 40 L 40 60 M 95 40 L 120 60" stroke="#f1c40f" stroke-width="2" stroke-dasharray="2,1" />
+
+                    <!-- Gametas (n) -->
+                    <circle cx="35" cy="70" r="8" fill="#e67e22" />
+                    <text x="32" y="73" fill="#ffffff" font-size="7" font-weight="bold">n</text>
+                    <circle cx="125" cy="70" r="8" fill="#e67e22" />
+                    <text x="122" y="73" fill="#ffffff" font-size="7" font-weight="bold">n</text>
+
+                    <!-- Fecundação / Zigoto -->
+                    <path d="M 43 75 L 70 90 M 117 75 L 90 90" stroke="#00f0ff" stroke-width="2" />
+                    <rect x="72" y="85" width="16" height="16" fill="#00f0ff" />
+                    <text x="74" y="96" fill="#0b0e14" font-size="7" font-weight="bold">2n</text>
+                </svg>
+            </div>
+
+            <div class="card-container">
+                <div class="card">
+                    <h3>Ciclos de Vida Reprodutivos</h3>
+                    <p>• <strong>Haplobionte Diplonte</strong>: O organismo adulto é diploide (2n); apenas os gametas são haploides (Ex.: Animais e humanos).<br>
+                    • <strong>Haplobionte Haplonte</strong>: O organismo adulto é haploide (n); a fase diploide restringe-se ao zigoto (Ex.: Fungos).<br>
+                    • <strong>Diplobionte</strong>: Alternância de gerações (geração diploide esporófita e haploide gametófita; Ex.: Plantas).</p>
+                </div>
+                <div class="card card-destaque">
+                    <h3>Mecanismos Reprodutivos Especiais</h3>
+                    <p>• <strong>Partenogênese</strong>: Desenvolvimento embrionário a partir de ovócitos não fecundados (Ex.: Zangões).<br>
+                    • <strong>Poliembrionia</strong>: Separação precoce das células de um único zigoto, gerando clones geneticamente idênticos (Ex.: Tatus).<br>
+                    • <strong>Neotenia</strong>: Capacidade reprodutiva atingida ainda na fase larval (Ex.: Axolotes).</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Página Informativa sobre Biologia Celular e Reprodutiva em Pixel Art 32-Bit | Otimizado para navegação leve e responsiva</p>
+    </footer>
+
+</body>
+</html>
