@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>CRUD Celular</title>
+</head>
+
+<body>
+<h1 style="background-color: rgb(28, 177, 25);">Cadastro de Celular</h1>
+
+   <label for="inputNumero">Numero (Apenas Inteiros)</label>
+   <input type="text" name="inputPlaca" id="inputPlaca">
+   
+   <input type="button" value="Procure" id="btProcure" onclick="procure()" style="display:inline;">
+   <input type="button" value="Inserir" id="btInserir" onclick="inserir()" style="display:none;">
+   <input type="button" value="Alterar" id="btAlterar" onclick="alterar()" style="display:none;">
+   <input type="button" value="Excluir" id="btExcluir" onclick="excluir()" style="display:none;">
+   <br><br>
+
+   <label for="inputModelo">Modelo</label>
+   <input type="text" name="inputModelo" id="inputModelo">
+   <br><br>
+
+   <label for="inputFabricante">Fabricante</label>
+   <input type="text" name="inputFabricante" id="inputFabricante">
+   <br><br>
+
+   <label for="inputPreço">Preço</label>
+   <input type="number" name="inputPreço" id="inputPreço">
+   <br><br>
+
+   <div id="divAviso" style="background-color: antiquewhite; padding: 5px; min-height: 20px;"></div>
+   <br>
+   
+   <input type="button" value="Salvar" id="btSalvar" onclick="salvar()" style="display:none;">
+   <input type="button" value="Cancelar" id="btCancelar" onclick="cancelarOperacao()" style="display:none;">
+   <br><br>
+
+   <div id="outputSaida" style="background-color: aqua; padding: 10px;">...</div>
+
+   <!-- Inclusão correta dos scripts -->
+   <script src="./Celular.js"></script>
+   <script src="./CelularControle.js"></script>
+</body>
+
+</html>
